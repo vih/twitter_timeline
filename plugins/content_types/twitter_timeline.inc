@@ -10,7 +10,7 @@ $plugin = array(
   'admin info' => 'twitter_timeline_twitter_timeline_admin_info',
   'defaults' => array(
     'username' => '',
-    'tweets_to_show' => 5,
+    'widget_id' => '',
   )
 );
 
@@ -43,6 +43,20 @@ function twitter_timeline_twitter_timeline_edit_form($form, &$form_state) {
     '#required' => TRUE,
   );
 
+  if (!empty($conf['widget_id'])) {
+    $description = t('The widget id of the widget created from !link.', array('!link' => l('widget configuration', 'https://twitter.com/settings/widgets/' . $conf['widget_id'] . '/edit')));
+  } else {
+    $description = t('The widget id of the widget created from !link.', array('!link' => l('widget configuration', 'https://twitter.com/settings/widgets/new')));
+  }
+
+  $form['widget_id'] = array(
+    '#title' => t('Twitter widget id'),
+    '#description' => $description,
+    '#type' => 'textfield',
+    '#default_value' => $conf['widget_id'],
+    '#required' => TRUE,
+  );
+  /*
   $form['tweets_to_show'] = array(
     '#title' => t('Number of tweets to show'),
     '#description' => t('Used to control the number of tweets shown on the page initially. Defaults to 5.'),
@@ -51,6 +65,7 @@ function twitter_timeline_twitter_timeline_edit_form($form, &$form_state) {
     '#default_value' => $conf['tweets_to_show'],
     '#required' => TRUE,
   );
+  */
 
   return $form;
 }
@@ -79,7 +94,7 @@ function twitter_timeline_twitter_timeline_render($subtype, $conf, $panel_args, 
 
   // Add in the content
   $block->content .= '
-    <a class="twitter-timeline" href="https://twitter.com/' . check_plain($conf['username']) . '" data-widget-id="394932361067913216">Tweets af @' . check_plain($conf['username']) . '</a>
+    <a class="twitter-timeline" href="https://twitter.com/' . check_plain($conf['username']) . '" data-widget-id="' . check_plain($conf['widget_id'])  . '">Tweets af @' . check_plain($conf['username']) . '</a>
     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>';
 
   return $block;
