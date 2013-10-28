@@ -1,0 +1,4 @@
+name = VIES Twitter Timeline
+description = Adds a Twitter Timeline to a panels pane
+version = 7.x-1.0
+core = 7.x
