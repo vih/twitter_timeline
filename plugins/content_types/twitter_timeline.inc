@@ -5,11 +5,11 @@ $plugin = array(
   'title' => t('Twitter timeline'),
   'description' => t('Shows a twitter timeline with basic configuration options.'),
   'category' => t('Social media'),
-  'edit form' => 'examplemodule_twitter_timeline_edit_form',
-  'render callback' => 'examplemodule_twitter_timeline_render',
-  'admin info' => 'examplemodule_twitter_timeline_admin_info',
+  'edit form' => 'twitter_timeline_twitter_timeline_edit_form',
+  'render callback' => 'twitter_timeline_twitter_timeline_render',
+  'admin info' => 'twitter_timeline_twitter_timeline_admin_info',
   'defaults' => array(
-    'username' => 'wiifm',
+    'username' => '',
     'tweets_to_show' => 5,
   )
 );
@@ -17,7 +17,7 @@ $plugin = array(
 /**
  * 'admin info' callback for panel pane.
  */
-function examplemodule_twitter_timeline_admin_info($subtype, $conf, $contexts) {
+function twitter_timeline_twitter_timeline_admin_info($subtype, $conf, $contexts) {
   if (!empty($conf)) {
     $block = new stdClass;
     $block->title = $conf['override_title'] ? $conf['override_title_text'] : '';
@@ -32,7 +32,7 @@ function examplemodule_twitter_timeline_admin_info($subtype, $conf, $contexts) {
 /**
  * 'Edit form' callback for the content type.
  */
-function examplemodule_twitter_timeline_edit_form($form, &$form_state) {
+function twitter_timeline_twitter_timeline_edit_form($form, &$form_state) {
   $conf = $form_state['conf'];
 
   $form['username'] = array(
@@ -58,7 +58,7 @@ function examplemodule_twitter_timeline_edit_form($form, &$form_state) {
 /**
  * The submit form stores the data in $conf.
  */
-function examplemodule_twitter_timeline_edit_form_submit($form, &$form_state) {
+function twitter_timeline_twitter_timeline_edit_form_submit($form, &$form_state) {
   foreach (array_keys($form_state['plugin']['defaults']) as $key) {
     if (isset($form_state['values'][$key])) {
       $form_state['conf'][$key] = $form_state['values'][$key];
@@ -70,49 +70,17 @@ function examplemodule_twitter_timeline_edit_form_submit($form, &$form_state) {
  * Run-time rendering of the body of the block (content type)
  * See ctools_plugin_examples for more advanced info
  */
-function examplemodule_twitter_timeline_render($subtype, $conf, $panel_args, $context = NULL) {
+function twitter_timeline_twitter_timeline_render($subtype, $conf, $panel_args, $context = NULL) {
   $block = new stdClass();
 
   // initial content is blank
   $block->title = '';
   $block->content = '';
 
-  // Include twitter javascript - by linking to the external file.
-  drupal_add_js('//widgets.twimg.com/j/2/widget.js', 'external');
-
   // Add in the content
   $block->content .= '
-    <script type="text/javascript">
-      var t = new TWTR.Widget({
-        version: 2,
-        type: "profile",
-        rpp: ' . check_plain($conf['tweets_to_show']) . ',
-        interval: 30000,
-        width: "300",
-        height: "300",
-        theme: {
-          shell: {
-            background: "#ededed",
-            color: "#6a6a6a"
-          },
-          tweets: {
-            background: "#fafafa",
-            color: "#6a6a6a",
-            links: "#6a6a6a"
-          }
-        },
-        features: {
-          avatars: false,
-          hashtags: true,
-          scrollbar: false,
-          loop: true,
-          live: true,
-          behavior: "default"
-        }
-      });
-
-      t.render().setUser("' . check_plain($conf['username']) . '").start();
-    </script>';
+    <a class="twitter-timeline" href="https://twitter.com/' . check_plain($conf['username']) . '" data-widget-id="394932361067913216">Tweets af @' . check_plain($conf['username']) . '</a>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>';
 
   return $block;
 }
